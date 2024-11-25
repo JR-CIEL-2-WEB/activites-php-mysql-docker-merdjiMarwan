@@ -1,20 +1,17 @@
 <?php
-function moyenne($salaries) {
-    return array_sum($salaries) / count($salaries);
+function moyenne($salaires) {
+    return array_sum($salaires) / count($salaires);
 }
 
-function mediane($salaries) {
-    sort($salaries); 
-    $n = count($salaries);
+function mediane($salaires) {
+    $n = count($salaires);
     
     if ($n % 2 == 0) {
-        
-        $milieu1 = $salaries[$n / 2 - 1];
-        $milieu2 = $salaries[$n / 2];
+        $milieu1 = $salaires[$n / 2 - 1];
+        $milieu2 = $salaires[$n / 2];
         return ($milieu1 + $milieu2) / 2;
     } else {
-        
-        return $salaries[floor($n / 2)];
+        return $salaires[floor($n / 2)];
     }
 }
 ?>
