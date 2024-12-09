@@ -1,22 +1,27 @@
 <?php
-require_once 'statistique.php';
-include('tri_selection_reference.php');
-include('read_tab.php');
+// Inclure les fichiers nécessaires
+include 'tri_selection_reference.php'; // Fichier contenant la fonction de tri
+include 'statistique.php'; // Fichier contenant la fonction de calcul de la médiane
 
-$salaires = [1500, 4500, 2200, 1500, 1700, 1800, 2000, 3300, 4000];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Récupération des données JSON
+    $data = json_decode(file_get_contents("php://input"), true);
+    $tableau = $data['t'] ?? [];
 
-$moyenne_salaire = moyenne($salaires);
+    // Vérification si le tableau est vide
+    if (empty($tableau)) {
+        echo json_encode(["error" => "Tableau vide"]);
+        exit;
+    }
 
-$mediane_salaire = mediane($salaires);
+    // Appel à la fonction de tri
+    tri_selection_reference($tableau); // Tri en place
 
-$salaire_nicolas = 2200;
+    // Appel à la fonction de calcul de la médiane
+    $mediane = mediane($tableau); // Utiliser la fonction mediane
 
-echo "Moyenne des salaires : " . number_format($moyenne_salaire, 2) . " €<br>";
-echo "Médiane des salaires : " . number_format($mediane_salaire, 2) . " €<br>";
-
-if ($salaire_nicolas < $mediane_salaire) {
-    echo "Nicolas est parmi les moins bien payés de l'entreprise.<br>";
-} else {
-    echo "Nicolas n'est pas parmi les moins bien payés de l'entreprise.<br>";
+    // Réponse JSON avec le tableau trié et la médiane
+    echo json_encode(["sorted" => $tableau, "mediane" => $mediane]);
+    exit;
 }
 ?>

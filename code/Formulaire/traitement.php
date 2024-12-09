@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Résultat du Formulaire</title>
+    <title>Formulaire avec Validation</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <style>
         body {
@@ -28,79 +28,112 @@
             color: #343a40;
         }
 
-        .error {
-            color: #dc3545;
-            font-size: 14px;
-        }
-
-        .success {
-            color: #28a745;
-            font-size: 14px;
-        }
-
-        .data-row {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .data-row:last-child {
-            border-bottom: none;
-        }
-
-        .data-label {
-            font-weight: bold;
-            color: #495057;
-        }
-
-        .data-value {
-            color: #6c757d;
+        .alert {
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <h1>Formulaire d'inscription</h1>
         <?php
+        // Initialisation des variables
+        $name = $prenom = $email = $password = $message = '';
+        $errors = [];
+        $successMessage = '';
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Récupération des données POST
             $name = htmlspecialchars($_POST['name'] ?? '');
             $prenom = htmlspecialchars($_POST['prénom'] ?? '');
             $email = htmlspecialchars($_POST['email'] ?? '');
             $password = htmlspecialchars($_POST['password'] ?? '');
             $message = htmlspecialchars($_POST['message'] ?? '');
-            $of_age = isset($_POST['of_age']) ? 'Oui' : 'Non';
 
-            $errors = [];
+            // Chemin vers le fichier JSON
+            $file = 'data.json';
 
             // Validation des champs
             if (empty($name)) $errors[] = 'Le champ "Nom" est obligatoire.';
             if (empty($prenom)) $errors[] = 'Le champ "Prénom" est obligatoire.';
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email invalide.';
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'L\'email est invalide.';
             if (strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
             if (empty($message)) $errors[] = 'Le champ "Message" est obligatoire.';
-            if ($of_age === 'Non') $errors[] = 'Vous devez être majeur.';
 
-            // Affichage des erreurs ou des données
-            if (!empty($errors)) {
-                echo '<h1>Erreurs</h1>';
-                echo '<ul class="error">';
-                foreach ($errors as $error) {
-                    echo "<li>$error</li>";
+            // Vérification des erreurs
+            if (empty($errors)) {
+                // Lecture du fichier JSON
+                $data = file_exists($file) ? json_decode(file_get_contents($file), true) : [];
+
+                // Vérification si le compte existe
+                $existingAccount = false;
+                foreach ($data as $account) {
+                    if ($account['email'] === $email) {
+                        $existingAccount = true;
+                        break;
+                    }
                 }
-                echo '</ul>';
-            } else {
-                echo '<h1>Données Reçues</h1>';
-                echo '<div class="data-row"><span class="data-label">Nom :</span> <span class="data-value">' . $name . '</span></div>';
-                echo '<div class="data-row"><span class="data-label">Prénom :</span> <span class="data-value">' . $prenom . '</span></div>';
-                echo '<div class="data-row"><span class="data-label">Email :</span> <span class="data-value">' . $email . '</span></div>';
-                echo '<div class="data-row"><span class="data-label">Message :</span> <span class="data-value">' . $message . '</span></div>';
-                echo '<div class="data-row"><span class="data-label">Majeur :</span> <span class="data-value">' . $of_age . '</span></div>';
-                echo '<div class="data-row"><span class="data-label">Mot de passe :</span> <span class="data-value">(non affiché pour des raisons de sécurité)</span></div>';
+
+                if ($existingAccount) {
+                    $errors[] = 'Ce compte existe déjà.';
+                } else {
+                    // Ajout du compte
+                    $newAccount = [
+                        'name' => $name,
+                        'prénom' => $prenom,
+                        'email' => $email,
+                        'password' => password_hash($password, PASSWORD_DEFAULT), // Hash du mot de passe
+                        'message' => $message,
+                    ];
+                    $data[] = $newAccount;
+
+                    // Enregistrement dans le fichier JSON
+                    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
+
+                    $successMessage = 'Compte créé avec succès !';
+                    // Réinitialisation des champs
+                    $name = $prenom = $email = $password = $message = '';
+                }
             }
-        } else {
-            echo '<h1>Accès non autorisé</h1>';
-            echo '<p class="error">Veuillez soumettre le formulaire pour accéder à cette page.</p>';
+        }
+
+        // Affichage des messages d'erreur ou de succès
+        if (!empty($errors)) {
+            echo '<div class="alert alert-danger"><ul>';
+            foreach ($errors as $error) {
+                echo "<li>$error</li>";
+            }
+            echo '</ul></div>';
+        }
+
+        if (!empty($successMessage)) {
+            echo '<div class="alert alert-success">' . $successMessage . '</div>';
         }
         ?>
+        <form method="post">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nom</label>
+                <input type="text" class="form-control" name="name" value="<?= htmlspecialchars($name) ?>" placeholder="Votre nom" required>
+            </div>
+            <div class="mb-3">
+                <label for="prénom" class="form-label">Prénom</label>
+                <input type="text" class="form-control" name="prénom" value="<?= htmlspecialchars($prenom) ?>" placeholder="Votre prénom" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" value="<?= htmlspecialchars($email) ?>" placeholder="Votre email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" name="password" placeholder="Votre mot de passe" required>
+            </div>
+            <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea class="form-control" name="message" rows="5" placeholder="Votre message"><?= htmlspecialchars($message) ?></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </form>
     </div>
 </body>
 

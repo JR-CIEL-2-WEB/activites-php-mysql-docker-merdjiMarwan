@@ -8,6 +8,70 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        .contact-clean {
+            padding: 40px 0;
+            background-color: #ffffff;
+        }
+
+        .contact-clean form {
+            max-width: 450px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-clean h2 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            color: #333333;
+        }
+
+        .contact-clean .form-control {
+            border-radius: 5px;
+            box-shadow: none;
+            border: 1px solid #dcdcdc;
+            margin-bottom: 15px;
+            padding: 10px;
+        }
+
+        .contact-clean .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+        }
+
+        .contact-clean .btn-primary {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .contact-clean .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .contact-clean .text-danger {
+            font-size: 12px;
+        }
+
+        .form-check-label {
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,6 +100,195 @@
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/myscript.js"></script>
+</body>
+
+</html>
+ChatGPT a dit :
+ChatGPT
+J'attends votre instruction pour traiter le code que vous avez envoyé.
+
+
+
+
+
+
+Vous avez dit :
+function verifierFormulaire() {
+    var name = document.querySelector('input[name="name"]');
+    var prénom = document.querySelector('input[name="prénom"]');
+    var email = document.querySelector('input[name="email"]');
+    var password = document.querySelector('input[name="password"]');
+    var message = document.querySelector('textarea[name="message"]');
+    var checkbox = document.querySelector('input[name="of_age"]');
+    var isValid = true;
+
+    [name, prénom, email, password, message].forEach(input => input.style.borderColor = '');
+    checkbox.style.outline = '';
+    document.querySelector('.text-danger').classList.add('invisible');
+
+    if (name.value.trim() === '') {
+        name.style.borderColor = 'red';
+        isValid = false;
+    } else {
+        name.style.borderColor = 'green';
+    }
+
+    if (prénom.value.trim() === '') {
+        prénom.style.borderColor = 'red';
+        isValid = false;
+    } else {
+        prénom.style.borderColor = 'green';
+    }
+
+    var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (email.value.trim() === '') {
+        email.style.borderColor = 'red';
+        isValid = false;
+    } else if (!emailPattern.test(email.value.trim())) {
+        email.style.borderColor = 'red';
+        isValid = false;
+    } else {
+        email.style.borderColor = 'green';
+    }
+
+    if (password.value.trim() === '' || password.value.trim().length < 8) {
+        password.style.borderColor = 'red';
+        document.querySelector('.text-danger').classList.remove('invisible');
+        isValid = false;
+    } else {
+        password.style.borderColor = 'green';
+    }
+
+    if (message.value.trim() === '') {
+        message.style.borderColor = 'red';
+        isValid = false;
+    } else {
+        message.style.borderColor = 'green';
+    }
+
+    if (!checkbox.checked) {
+        checkbox.style.outline = '2px solid red';
+        isValid = false;
+    } else {
+        checkbox.style.outline = '2px solid green';
+    }
+
+    return isValid;
+}
+ChatGPT a dit :
+ChatGPT
+Votre code JavaScript semble être une fonction de validation pour un formulaire HTML. Veuillez me donner une instruction spécifique pour que je puisse analyser ou ajuster le code en conséquence. 😊
+
+
+
+
+
+
+Vous avez dit :
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultat du Formulaire</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+        }
+
+        .success {
+            color: #28a745;
+            font-size: 14px;
+        }
+
+        .data-row {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .data-value {
+            color: #6c757d;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <?php
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = htmlspecialchars($_POST['name'] ?? '');
+            $prenom = htmlspecialchars($_POST['prénom'] ?? '');
+            $email = htmlspecialchars($_POST['email'] ?? '');
+            $password = htmlspecialchars($_POST['password'] ?? '');
+            $message = htmlspecialchars($_POST['message'] ?? '');
+            $of_age = isset($_POST['of_age']) ? 'Oui' : 'Non';
+
+            $errors = [];
+
+            // Validation des champs
+            if (empty($name)) $errors[] = 'Le champ "Nom" est obligatoire.';
+            if (empty($prenom)) $errors[] = 'Le champ "Prénom" est obligatoire.';
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Email invalide.';
+            if (strlen($password) < 8) $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
+            if (empty($message)) $errors[] = 'Le champ "Message" est obligatoire.';
+            if ($of_age === 'Non') $errors[] = 'Vous devez être majeur.';
+
+            // Affichage des erreurs ou des données
+            if (!empty($errors)) {
+                echo '<h1>Erreurs</h1>';
+                echo '<ul class="error">';
+                foreach ($errors as $error) {
+                    echo "<li>$error</li>";
+                }
+                echo '</ul>';
+            } else {
+                echo '<h1>Données Reçues</h1>';
+                echo '<div class="data-row"><span class="data-label">Nom :</span> <span class="data-value">' . $name . '</span></div>';
+                echo '<div class="data-row"><span class="data-label">Prénom :</span> <span class="data-value">' . $prenom . '</span></div>';
+                echo '<div class="data-row"><span class="data-label">Email :</span> <span class="data-value">' . $email . '</span></div>';
+                echo '<div class="data-row"><span class="data-label">Message :</span> <span class="data-value">' . $message . '</span></div>';
+                echo '<div class="data-row"><span class="data-label">Majeur :</span> <span class="data-value">' . $of_age . '</span></div>';
+                echo '<div class="data-row"><span class="data-label">Mot de passe :</span> <span class="data-value">(non affiché pour des raisons de sécurité)</span></div>';
+            }
+        } else {
+            echo '<h1>Accès non autorisé</h1>';
+            echo '<p class="error">Veuillez soumettre le formulaire pour accéder à cette page.</p>';
+        }
+        ?>
+    </div>
 </body>
 
 </html>

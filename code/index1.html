@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcul Médiane</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tableau = [];
+            const resultDiv = document.getElementById("result");
+            const medianeDiv = document.getElementById("mediane");
+
+            // Ajouter un nombre au tableau
+            document.getElementById("add").addEventListener("click", () => {
+                const value = parseInt(document.getElementById("input").value, 10);
+                if (value > 0) {
+                    tableau.push(value);
+                    resultDiv.textContent = `Tableau: ${JSON.stringify(tableau)}`;
+                } else {
+                    alert("Entrez un entier > 0");
+                }
+                document.getElementById("input").value = "";
+            });
+
+            // Envoyer le tableau au serveur mock
+            document.getElementById("send").addEventListener("click", async () => {
+                const response = await fetch("https://fe37ba62-d5b1-4d34-b17c-e148318929c3.mock.pstmn.io", { // Remplacez par l'URL de votre serveur mock
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ t: tableau }),
+                });
+
+                const data = await response.json();
+
+                // Vérification de l'existence d'une erreur
+                if (data.error) {
+                    resultDiv.textContent = `Erreur : ${data.error}`;
+                    medianeDiv.textContent = "";
+                } else {
+                    resultDiv.textContent = `Tableau trié : ${JSON.stringify(data.sorted)}`;
+                    medianeDiv.textContent = `Médiane : ${data.mediane}`;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Calcul de la Médiane</h1>
+    <input type="number" id="input" placeholder="Entrez un nombre" />
+    <button id="add">Ajouter</button>
+    <button id="send">Envoyer</button>
+
+    <div id="result"></div>
+    <div id="mediane"></div>
+</body>
+</html>

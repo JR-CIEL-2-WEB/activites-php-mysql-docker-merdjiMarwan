@@ -1,0 +1,24 @@
+[
+    {
+        "name": "merdji",
+        "prenom": "marwan",
+        "email": "marwan.merdji@lycee-jeanrostand.fr",
+        "password": "marwan93",
+        "message": "oui.",
+        "of_age": "Yes"
+    },
+    {
+        "name": "Elmir",
+        "pr\u00e9nom": "Amine",
+        "email": "amine93tr@gmail.com",
+        "password": "$2y$10$oBFWwoEFOD69kKl59ljer.1vC8Z.e2BODFgKTMjyH\/AazdmmbbSLm",
+        "message": "dsd"
+    },
+    {
+        "name": "azdazd",
+        "pr\u00e9nom": "dazda",
+        "email": "adsad@gmail.com",
+        "password": "$2y$10$FfO9ifyDGZTWp2FR3LOl8.AfbFX3pR2nvfqfex8sAyL\/YIiKEbcsu",
+        "message": "trhrth"
+    }
+]
