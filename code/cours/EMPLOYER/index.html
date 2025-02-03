@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Employés</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .btn { padding: 8px 12px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background-color: #0056b3; }
+        .btn-danger {
+            padding: 8px 12px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background-color: darkred;
+        }
+        input, button { padding: 8px; margin: 5px; border-radius: 4px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Gestion des Employés</h1>
+
+    <!-- Formulaire pour ajouter un employé -->
+    <h2>Ajouter un Employé</h2>
+    <form id="employeeForm">
+        <input type="text" id="name" placeholder="Nom" required>
+        <input type="text" id="address" placeholder="Adresse" required>
+        <input type="number" id="salary" placeholder="Salaire" required>
+        <input type="hidden" id="employeeId">
+        <button type="submit" class="btn">Ajouter</button>
+    </form>
+
+    <!-- Tableau des employés -->
+    <h2>Liste des Employés</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Adresse</th>
+                <th>Salaire</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="employeeTable"></tbody>
+    </table>
+
+    <h2>Médiane des salaires</h2>
+    <div id="medianSalary">Calcul en cours...</div>
+
+    <script>
+        let employees = [];
+        let salaries = [];
+
+        // Mise à jour du tableau et de la médiane
+        function updateTable() {
+            const table = document.getElementById('employeeTable');
+            table.innerHTML = '';
+
+            employees.forEach((emp, i) => {
+                const row = `<tr>
+                    <td>${i + 1}</td>
+                    <td>${emp.name}</td>
+                    <td>${emp.address}</td>
+                    <td>${emp.salary}</td>
+                    <td>
+                        <button class="btn edit-btn" data-id="${emp.id}">Éditer</button>
+                        <button class="btn btn-danger delete-btn" data-id="${emp.id}">Supprimer</button>
+                    </td>
+                </tr>`;
+                table.innerHTML += row;
+            });
+
+            document.getElementById('medianSalary').textContent = `Médiane des salaires : ${calculateMedian()}`;
+            addEventListeners();
+        }
+
+        function calculateMedian() {
+            if (salaries.length === 0) return 0;
+            const sorted = [...salaries].sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+        }
+
+        // Charger les employés
+        fetch('employees.php')
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('medianSalary').textContent = data.error;
+                } else {
+                    employees = data.employees;
+                    salaries = employees.map(emp => emp.salary);
+                    updateTable();
+                }
+            });
+
+        // Ajouter un employé
+        document.getElementById('employeeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const salary = parseFloat(document.getElementById('salary').value);
+            const employeeId = document.getElementById('employeeId').value;
+
+            const method = employeeId ? 'PUT' : 'POST';
+            const url = employeeId ? `updateEmployee.php?id=${employeeId}` : 'addEmployee.php';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, address, salary })
+            }).then(() => location.reload());
+        });
+
+        function addEventListeners() {
+            // Événements pour éditer
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const empId = button.getAttribute('data-id');
+                    const emp = employees.find(e => e.id == empId);
+                    document.getElementById('name').value = emp.name;
+                    document.getElementById('address').value = emp.address;
+                    document.getElementById('salary').value = emp.salary;
+                    document.getElementById('employeeId').value = empId;
+                });
+            });
+
+            // Événements pour supprimer
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const empId = button.getAttribute('data-id');
+                    if (confirm('Êtes-vous sûr de vouloir supprimer cet employé ?')) {
+                        fetch(`deleteEmployee.php?id=${empId}`, {
+                            method: 'DELETE'
+                        }).then(() => location.reload());
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
